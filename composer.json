@@ -1,5 +1,5 @@
 {
-    "name": "mablae/store-locator",
+    "name": "mablae/store-locator-bundle",
     "description": "Symfony integration for mablae/store-locator",
     "type": "symfony-bundle",
     "autoload": {
