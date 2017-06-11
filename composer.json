@@ -1,0 +1,14 @@
+{
+    "name": "mablae/store-locator",
+    "description": "",
+    "type": "symfony-bundle",
+    "autoload": {
+      "psr-4": {
+        "Mablae\\StoreLocatorBundle\\" : "src"
+      }
+    },
+    "require": {
+        
+    },
+    
+}

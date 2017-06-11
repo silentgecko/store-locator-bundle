@@ -1,0 +1,4 @@
+MablaeStoreLocatorBundle:
+    resource: "@MablaeStoreLocatorBundle/Controller/StoreLocatorController.php"
+    prefix: "/store_locator"
+    type:     annotation

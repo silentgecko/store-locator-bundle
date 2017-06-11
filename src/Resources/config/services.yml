@@ -1,0 +1,7 @@
+services:
+
+  mablae.store_locator.distance_calculator:
+    class: Mablae\StoreLocator\DistanceCalculator\DistanceCalculatorGeotools
+
+  mablae.store_locator.store_list_provider:
+    class: Mablae\StoreLocator\StoreList\InMemoryStoreListProvider
