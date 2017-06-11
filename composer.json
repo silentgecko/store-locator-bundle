@@ -9,7 +9,7 @@
     },
     "require": {
         "willdurand/geocoder-bundle": "^4.1",
-        "mablae-store-locator" : "dev-master"
+        "mablae/store-locator" : "dev-master"
     }
     
 }
