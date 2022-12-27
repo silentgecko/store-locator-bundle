@@ -1,30 +1,38 @@
 <?php
 
-namespace Mablae\StoreLocatorBundle\Command;
+namespace Silentgecko\StoreLocatorBundle\Command;
 
-use Mablae\StoreLocator\Model\LocatedStore;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Silentgecko\StoreLocator\Model\LocatedStore;
+use Silentgecko\StoreLocator\StoreLocator;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class LocateCommand extends ContainerAwareCommand
+class LocateCommand extends Command
 {
-    protected function configure()
+    protected static $defaultName = 'mablae:store_locator:locate';
+    protected static $defaultDescription = 'Runs the location lookup and distance calculcation';
+    private StoreLocator $storeLocator;
+
+    public function __construct(StoreLocator $storeLocator, string $name = null)
     {
-        $this
-            ->setName('mablae:store_locator:locate')
-            ->setDescription('Runs the location lookup and distance calculcation')
-            ->addArgument('searchTerm', InputArgument::REQUIRED, 'Either a physical Location, Zipcode or IP');
+        parent::__construct($name);
+        $this->storeLocator = $storeLocator;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function configure()
+    {
+        $this->addArgument('searchTerm', InputArgument::REQUIRED, 'Either a physical Location, Zipcode or IP');
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $searchTerm = $input->getArgument('searchTerm');
 
 
-        $locatedStoreList = $this->getContainer()->get('mablae.store_locator')->locateBySearchTerm($searchTerm);
+        $locatedStoreList = $this->storeLocator->locateBySearchTerm($searchTerm);
         $output->writeln('Command result');
 
         $io = new SymfonyStyle($input, $output);
@@ -32,11 +40,10 @@ class LocateCommand extends ContainerAwareCommand
         $io->table(
             ['Distance', 'Title'],
             $locatedStoreList->getStoreList()->map(
-                function (LocatedStore $locatedStore) {
-                    return [$locatedStore->getDistanceToPoint(), $locatedStore->getLocatedItem()->getTitle()];
-                }
+                fn(LocatedStore $locatedStore) => [$locatedStore->getDistanceToPoint(), $locatedStore->getLocatedItem()->getTitle()]
             )->toArray()
         );
+        return Command::SUCCESS;
 
     }
 

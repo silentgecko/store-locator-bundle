@@ -1,30 +1,38 @@
 <?php
 
-namespace Mablae\StoreLocatorBundle\Controller;
+namespace Silentgecko\StoreLocatorBundle\Controller;
 
 use Geocoder\Model\Coordinates;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Silentgecko\StoreLocator\StoreList\InMemoryStoreListProvider;
+use Silentgecko\StoreLocator\StoreLocator;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Serializer;
 
-class StoreLocatorController extends Controller
+class StoreLocatorController extends AbstractController
 {
+    private StoreLocator $storeLocator;
+    private Serializer $serializer;
+
+    public function __construct(StoreLocator $storeLocator, Serializer $serializer)
+    {
+        $this->storeLocator = $storeLocator;
+        $this->serializer = $serializer;
+    }
 
     /**
      * @Route(name="mablae.store_locator.list", path="/list", methods={"GET"})
      *
      * @return Response
      */
-    public function listAction() {
-
-        $storeListProvider = $this->get('mablae.store_locator.store_list_provider');
-        $storeList = $storeListProvider->findAll();
-
-        $serializer = $this->get('serializer');
+    public function listAction(InMemoryStoreListProvider $listProvider)
+    {
+        $storeList = $listProvider->findAll();
 
         return new Response(
-            $serializer->serialize($storeList, 'json'),
+            $this->getSerializer()->serialize($storeList, 'json'),
             Response::HTTP_OK,
             ['Content-type' => 'application/json']
         );
@@ -35,22 +43,21 @@ class StoreLocatorController extends Controller
      *
      * @return Response
      */
-    public function locateBySearchTermAction(string $searchTerm) {
-
-        $storeLocator = $this->get('mablae.store_locator');
-        $locatedStoreList = $storeLocator->locateBySearchTerm($searchTerm);
+    public function locateBySearchTermAction(string $searchTerm)
+    {
+        $locatedStoreList = $this->getStoreLocator()->locateBySearchTerm($searchTerm);
 
         return $this->buildResponse($locatedStoreList);
     }
+
     /**
      * @Route(name="mablae.store_locator.locate_by_coordinates", path="/locateByCoordinates", methods={"POST"})
      *
      * @return Response
      */
-    public function locateByCoordinatesAction(string $latitude, string $longitude) {
-
-        $storeLocator = $this->get('mablae.store_locator');
-        $locatedStoreList = $storeLocator->locateByCoordinate(new Coordinates((float)$latitude, (float)$longitude));
+    public function locateByCoordinatesAction(string $latitude, string $longitude)
+    {
+        $locatedStoreList = $this->getStoreLocator()->locateByCoordinate(new Coordinates((float)$latitude, (float)$longitude));
 
         return $this->buildResponse($locatedStoreList);
     }
@@ -58,31 +65,35 @@ class StoreLocatorController extends Controller
     /**
      * @Route(name="mablae.store_locator.locate_by_ip", path="/locateByIp", methods={"GET"})
      *
-     * @param Request $request
      * @return Response
      */
-    public function locateByIpAction(Request $request) {
-
-        $storeLocator = $this->get('mablae.store_locator');
-
+    public function locateByIpAction(Request $request)
+    {
         $ipAddress = $request->getClientIp();
-        $locatedStoreList = $storeLocator->locateByIpAddress($ipAddress);
+        $locatedStoreList = $this->getStoreLocator()->locateByIpAddress($ipAddress);
 
         return $this->buildResponse($locatedStoreList);
     }
 
     /**
      * @param $locatedStoreList
-     * @return Response
      */
     private function buildResponse($locatedStoreList): Response
     {
-        $serializer = $this->get('serializer');
-
         return new Response(
-            $serializer->serialize($locatedStoreList, 'json'),
+            $this->getSerializer()->serialize($locatedStoreList, 'json'),
             Response::HTTP_OK,
             ['Content-type' => 'application/json']
         );
+    }
+
+    public function getStoreLocator(): StoreLocator
+    {
+        return $this->storeLocator;
+    }
+
+    public function getSerializer(): Serializer
+    {
+        return $this->serializer;
     }
 }

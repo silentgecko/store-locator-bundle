@@ -1,6 +1,6 @@
 <?php
 
-namespace Mablae\StoreLocatorBundle;
+namespace Silentgecko\StoreLocatorBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

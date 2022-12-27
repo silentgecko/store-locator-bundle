@@ -1,15 +1,28 @@
 {
-    "name": "mablae/store-locator-bundle",
-    "description": "Symfony integration for mablae/store-locator",
-    "type": "symfony-bundle",
-    "autoload": {
-      "psr-4": {
-        "Mablae\\StoreLocatorBundle\\" : "src"
-      }
-    },
-    "require": {
-        "willdurand/geocoder-bundle": "^4.1",
-        "mablae/store-locator" : "dev-master"
+  "name": "silentgecko/store-locator-bundle",
+  "description": "Symfony integration for mablae/store-locator",
+  "type": "symfony-bundle",
+  "autoload": {
+    "psr-4": {
+      "Silentgecko\\StoreLocatorBundle\\": "src"
     }
-    
+  },
+  "require": {
+    "php": "^7.4 || ^8.0",
+    "willdurand/geocoder-bundle": "^5",
+    "silentgecko/store-locator": "^0.3",
+    "symfony/console": "^5.4 || ^6.0",
+    "symfony/http-foundation": "^5.4 || ^6.0",
+    "sensio/framework-extra-bundle": "^5.4 || ^6.0",
+    "symfony/framework-bundle": "^5.4 || ^6.0"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/silentgecko/store-locator"
+    }
+  ],
+  "require-dev": {
+    "rector/rector": "^0.15.2"
+  }
 }

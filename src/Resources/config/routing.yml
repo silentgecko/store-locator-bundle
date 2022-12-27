@@ -1,4 +1,4 @@
-MablaeStoreLocatorBundle:
-    resource: "@MablaeStoreLocatorBundle/Controller/StoreLocatorController.php"
+SilentgeckoStoreLocatorBundle:
+    resource: "@SilentgeckoStoreLocatorBundle/Controller/StoreLocatorController.php"
     prefix: "/store_locator"
     type:     annotation
